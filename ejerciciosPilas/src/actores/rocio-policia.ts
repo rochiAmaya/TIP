@@ -14,18 +14,22 @@ class Policia extends ActorAnimado{
 
 	    this.definirAnimacion("parado",[0],5);
 
-	    //this.definirAnimacion("pasar",[0,1,1,0],15);
+	    this.definirAnimacion("pasar",[1],15);
 
 	    }
 
 
-	meDejaPasar(){
-		return (Math.floor((Math.random() * 10) + 1)%2)==1;
+	dejaPasar(){
+		var result = (Math.floor((Math.random() * 2) + 1)%2)==1;
+		if(result === false){
+			this.detener_animacion();
+			this.cargarAnimacion("pasar");
+		}else{
+			this.detener_animacionN("pasar");
+			this.cargarAnimacion("parado");
+		}
+		return result
 	}
-
-	 argumentosDejarPasar(){
-        return {grilla: 'rocio/policiaSecuencia.png', cantColumnas: 2};
-    }
 
 }
 

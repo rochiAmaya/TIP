@@ -18,3 +18,24 @@ class EsperaAnimada extends Animar {
     return super.actualizar();
   }
 }
+
+
+class RecogerEstrella extends Comportamiento {
+
+  iniciar(receptor) {
+    super.iniciar(receptor);
+  }
+
+  actualizar() {
+    var estrellas = pilas.obtener_actores_con_etiqueta("Estrella");
+    
+    if (estrellas.lenght > 0){
+      
+      var estrellaActual = pilas.obtener_actores_en(this.receptor.x, this.receptor.y, 'Estrella')
+      estrellaActual[0].eliminar();
+
+      return true;
+    }
+    return false;
+  }
+}

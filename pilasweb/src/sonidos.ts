@@ -18,22 +18,26 @@ class Sonidos {
   recursos;
   preload;
 
-  constructor(data_path) {
+  nombreSonidos = ['smile.ogg','shout.ogg', 'saltar.wav', 'blabla.wav']
+  constructor(data_path, opciones) {
     this.recursos = [];
     this.preload = new createjs.LoadQueue(true, data_path+"/");
     this.preload.installPlugin(createjs.Sound);
+     this.nombreSonidos = this.nombreSonidos.concat(opciones.sonidosExtra);
     this.cargar_recursos();
   }
 
   private cargar_recursos() {
-    this.cargar_recurso('smile.ogg');
-    this.cargar_recurso('shout.ogg');
-    this.cargar_recurso('saltar.wav');
-    this.cargar_recurso('blabla.wav');
+    var _this = this;
+    this.nombresImagenes.forEach(function(nombre){
+      this.cargar_recurso(nombre);
+    });
+
     this.preload.loadManifest(this.recursos);
   }
 
   private cargar_recurso(nombre) {
+
     this.recursos.push({id:nombre, src:nombre});
   }
 

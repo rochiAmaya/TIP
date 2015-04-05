@@ -56,6 +56,10 @@ class ActorAnimado extends Actor {
     detener_animacion() {
         this.cargarAnimacion("parado");
     }
+
+    detener_animacionN(nombre) {
+        this.cargarAnimacion(nombre);
+    }
     
     cargarAnimacion(nombre){
     	this._imagen.cargar_animacion(nombre);

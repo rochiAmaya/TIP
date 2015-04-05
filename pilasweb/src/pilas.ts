@@ -95,7 +95,7 @@ class Pilas {
     this.grupo = new grupo();
     this.colisiones = new Colisiones();
     this.colores = new colores();
-    this.sonidos = new Sonidos(this.opciones.data_path);
+    this.sonidos = new Sonidos(this.opciones.data_path, this.opciones);
     this.escena = new escena();
     this.tareas = new tareas();
     this.rutinas = new Rutinas();
@@ -151,6 +151,7 @@ class Pilas {
     this.opciones.canvas_id = this.opciones.canvas_id || 'canvas';
     this.opciones.canvas = this.opciones.canvas || null;
     this.opciones.imagenesExtra = this.opciones.imagenesExtra || [];
+    this.opciones.sonidosExtra = this.opciones.sonidosExtra || [];
   }
 
 

@@ -23,13 +23,10 @@ class EscenaPolicia extends Base {
             {alto: 80},
             {grilla: 'rocio/callecasilla.png', 
             cantColumnas: 5})
-        
-    
-
 
         this.autito = new Autito(0,0);
         this.autito.setCuadricula(this.cuadricula,0,0);
-        this.autito.aprender(AvisaAlSalirDePantalla,{});
+        
 
         this.policias = []
         this.policias.push(new Policia(0,2))
@@ -49,26 +46,23 @@ class EscenaPolicia extends Base {
         return this.autito.colisiona_con(this.policias[0]) ||  this.autito.colisiona_con(this.policias[1])
     }
 
-
-
     esperar(){
         this.autito.hacer_luego(EsperaAnimada,this.autito.argumentosEspera());
     }
 
     policiaDiceQueEspere(){
-        var respuesta = (this.tocandoPolicia() && (this.policias[0].meDejaPasar()|| this.policias[1].meDejaPasar()));
+        var respuesta = (this.tocandoPolicia() && (this.policias[0].dejaPasar()|| this.policias[1].dejaPasar()));
         return  respuesta;    
     }
+    //esta seria la solucion esperada, dentro de un recorrido.
     tengoQueEsperar(){
         if(this.policiaDiceQueEspere()){
             this.esperar();
         }else{
             this.irDerecha();
         }
-
     }
 
-    
 //var e = pilas.mundo.gestor_escenas.escena_actual()   
                 //e.martillar()     
 }

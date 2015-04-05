@@ -18521,6 +18521,9 @@ var ActorAnimado = (function (_super) {
     ActorAnimado.prototype.detener_animacion = function () {
         this.cargarAnimacion("parado");
     };
+    ActorAnimado.prototype.detener_animacionN = function (nombre) {
+        this.cargarAnimacion(nombre);
+    };
     ActorAnimado.prototype.cargarAnimacion = function (nombre) {
         this._imagen.cargar_animacion(nombre);
     };
@@ -18882,13 +18885,13 @@ var Autito = (function (_super) {
     function Autito(x, y) {
         _super.call(this, x, y, { grilla: 'rocio/carRed.png', cantColumnas: 1 });
         this.escala_y = 1.5;
-        this.escala_x = 1.5;
+        this.escala_x = 2;
         this.definirAnimacion("parado", [0], 5);
         this.radio_de_colision = 15;
     }
     Autito.prototype.argumentosEspera = function () {
-        return { grilla: 'cooperativista/trabajando.png', cantColumnas: 2, sonido: 'saltar.wav' };
-        //TOdo replace por imagen de espera (autito tirando humo) y su sonido.
+        return { grilla: 'rocio/carRed.png', cantColumnas: 1, sonido: 'saltar.wav' };
+        //TOdo replace por imagen de espera (autito tirando humo). y sonido cdo pueda compilar pilasweb 'rocio/bocina.wav'
     };
     return Autito;
 })(ActorAnimado);
@@ -18927,13 +18930,19 @@ var Policia = (function (_super) {
         this.escala_y = 0.2;
         this.escala_x = 0.2;
         this.definirAnimacion("parado", [0], 5);
-        //this.definirAnimacion("pasar",[0,1,1,0],15);
+        this.definirAnimacion("pasar", [1], 15);
     }
-    Policia.prototype.meDejaPasar = function () {
-        return (Math.floor((Math.random() * 10) + 1) % 2) == 1;
-    };
-    Policia.prototype.argumentosDejarPasar = function () {
-        return { grilla: 'rocio/policiaSecuencia.png', cantColumnas: 2 };
+    Policia.prototype.dejaPasar = function () {
+        var result = (Math.floor((Math.random() * 2) + 1) % 2) == 1;
+        if (result === false) {
+            this.detener_animacion();
+            this.cargarAnimacion("pasar");
+        }
+        else {
+            this.detener_animacionN("pasar");
+            this.cargarAnimacion("parado");
+        }
+        return result;
     };
     return Policia;
 })(ActorAnimado);
@@ -19079,6 +19088,25 @@ var EsperaAnimada = (function (_super) {
     };
     return EsperaAnimada;
 })(Animar);
+var RecogerEstrella = (function (_super) {
+    __extends(RecogerEstrella, _super);
+    function RecogerEstrella() {
+        _super.apply(this, arguments);
+    }
+    RecogerEstrella.prototype.iniciar = function (receptor) {
+        _super.prototype.iniciar.call(this, receptor);
+    };
+    RecogerEstrella.prototype.actualizar = function () {
+        var estrellas = pilas.obtener_actores_con_etiqueta("Estrella");
+        if (estrellas.lenght > 0) {
+            var estrellaActual = pilas.obtener_actores_en(this.receptor.x, this.receptor.y, 'Estrella');
+            estrellaActual[0].eliminar();
+            return true;
+        }
+        return false;
+    };
+    return RecogerEstrella;
+})(Comportamiento);
 /// <reference path = "../../dependencias/pilasweb.d.ts"/>
 /********** POR FAVOR NO MIRAR ESTA CLASE. NO SIRVE DE EJEMPLO *************/
 /********** POR FAVOR NO MIRAR ESTA CLASE. NO SIRVE DE EJEMPLO *************/
@@ -19317,6 +19345,7 @@ var LightBot = (function (_super) {
 /// <reference path = "../../dependencias/pilasweb.d.ts"/>
 /// <reference path = "../actores/rocio-estrella.ts"/>
 /// <reference path = "../actores/rocio-astronauta.ts"/>
+/// <reference path = "../comportamientos/rocio-comportamientos.ts"/>
 /// <reference path = "../actores/Cuadricula.ts"/>
 /**
  * @class EscenaAstronauta
@@ -19330,34 +19359,53 @@ var EscenaAstronauta = (function (_super) {
     EscenaAstronauta.prototype.iniciar = function () {
         this.fondo = new Fondo('rocio/fondoEspacio.png', 0, 0);
         this.cuadricula = new Cuadricula(0, 0, 3, 6, { alto: 140 }, { grilla: 'casillaLightbot.png', cantColumnas: 5, alto: 50, ancho: 55 });
-        this.robot = new Astronauta(0, 0);
-        this.robot.setCuadricula(this.cuadricula, 0, 0);
+        this.astronauta = new Astronauta(0, 0);
+        this.astronauta.setCuadricula(this.cuadricula, 0, 0);
         this.estrellas = [];
-        this.estrellas.push(new Estrella(0, 2));
-        this.estrellas.push(new Estrella(0, 5));
+        this.estrellas.push(new Estrella(this.nroFila(), this.nroColumna()));
+        this.estrellas.push(new Estrella(this.nroFila(), this.nroColumna()));
+        this.estrellas.push(new Estrella(this.nroFila(), this.nroColumna()));
         for (var i = this.estrellas.length - 1; i >= 0; i--) {
+            if (this.estrellas[i].ubicacionFila === 0 && this.estrellas[i].ubicacionColumna === 0) {
+                this.estrellas[i].ubicacionFila = 1;
+            }
             this.estrellas[i].setCuadricula(this.cuadricula, this.estrellas[i].ubicacionFila, this.estrellas[i].ubicacionColumna);
         }
         ;
         this.countEstrellas = 0;
     };
+    EscenaAstronauta.prototype.nroFila = function () {
+        return Math.floor((Math.random() * 3));
+    };
+    EscenaAstronauta.prototype.nroColumna = function () {
+        return Math.floor((Math.random() * 6));
+    };
     EscenaAstronauta.prototype.irArriba = function () {
-        this.robot.hacer_luego(MoverACasillaArriba);
+        this.astronauta.hacer_luego(MoverACasillaArriba);
     };
     EscenaAstronauta.prototype.irAbajo = function () {
-        this.robot.hacer_luego(MoverACasillaAbajo);
+        this.astronauta.hacer_luego(MoverACasillaAbajo);
     };
     EscenaAstronauta.prototype.irDerecha = function () {
-        this.robot.hacer_luego(MoverACasillaDerecha);
+        this.astronauta.hacer_luego(MoverACasillaDerecha);
     };
     EscenaAstronauta.prototype.irIzquierda = function () {
-        this.robot.hacer_luego(MoverACasillaIzquierda);
+        this.astronauta.hacer_luego(MoverACasillaIzquierda);
     };
     EscenaAstronauta.prototype.tocandoEstrella = function () {
-        //'ni idea'
+        return (this.astronauta.colisiona_con(this.estrellas[0]) || this.astronauta.colisiona_con(this.estrellas[1]) || this.astronauta.colisiona_con(this.estrellas[2]));
+    };
+    EscenaAstronauta.prototype.agarrarEstrella = function () {
+        this.astronauta.hacer_luego(RecogerEstrella);
+    };
+    EscenaAstronauta.prototype.quitarEstrella = function () {
+        this.irDerecha();
+        if (this.tocandoEstrella()) {
+            this.agarrarEstrella();
+        }
     };
     EscenaAstronauta.prototype.sumarEstrella = function () {
-        //this.robot.hacer_luego(SumarEstrella) //esto deberia ser un comportamiento ?
+        //this.astronauta.hacer_luego(SumarEstrella) //esto deberia ser un comportamiento ?
     };
     return EscenaAstronauta;
 })(Base);
@@ -19381,7 +19429,6 @@ var EscenaPolicia = (function (_super) {
         this.cuadricula = new Cuadricula(0, -100, 1, 7, { alto: 80 }, { grilla: 'rocio/callecasilla.png', cantColumnas: 5 });
         this.autito = new Autito(0, 0);
         this.autito.setCuadricula(this.cuadricula, 0, 0);
-        this.autito.aprender(AvisaAlSalirDePantalla, {});
         this.policias = [];
         this.policias.push(new Policia(0, 2));
         this.policias.push(new Policia(0, 5));
@@ -19400,9 +19447,10 @@ var EscenaPolicia = (function (_super) {
         this.autito.hacer_luego(EsperaAnimada, this.autito.argumentosEspera());
     };
     EscenaPolicia.prototype.policiaDiceQueEspere = function () {
-        var respuesta = (this.tocandoPolicia() && (this.policias[0].meDejaPasar() || this.policias[1].meDejaPasar()));
+        var respuesta = (this.tocandoPolicia() && (this.policias[0].dejaPasar() || this.policias[1].dejaPasar()));
         return respuesta;
     };
+    //esta seria la solucion esperada, dentro de un recorrido.
     EscenaPolicia.prototype.tengoQueEsperar = function () {
         if (this.policiaDiceQueEspere()) {
             this.esperar();
