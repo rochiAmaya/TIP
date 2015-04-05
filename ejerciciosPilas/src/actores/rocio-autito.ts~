@@ -1,0 +1,6 @@
+/// <reference path="ActorAnimado.ts"/>
+class Autito extends ActorAnimado{
+	 constructor(x, y) {
+		super(x, y, {grilla: 'tortuga.png', cantColumnas: 1});
+	    }
+}
