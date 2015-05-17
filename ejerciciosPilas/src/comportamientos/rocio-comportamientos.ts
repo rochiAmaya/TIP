@@ -31,7 +31,7 @@ class RecogerEstrella extends Comportamiento {
     
     if (estrellas.lenght > 0){
       
-      var estrellaActual = pilas.obtener_actores_en(this.receptor.x, this.receptor.y, 'Estrella')
+      var estrellaActual = pilas.obtener_actores_en(this.receptor.x, this.receptor.y, "Estrella")
       estrellaActual[0].eliminar();
 
       return true;

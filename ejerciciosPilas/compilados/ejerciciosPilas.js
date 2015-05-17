@@ -19099,7 +19099,7 @@ var RecogerEstrella = (function (_super) {
     RecogerEstrella.prototype.actualizar = function () {
         var estrellas = pilas.obtener_actores_con_etiqueta("Estrella");
         if (estrellas.lenght > 0) {
-            var estrellaActual = pilas.obtener_actores_en(this.receptor.x, this.receptor.y, 'Estrella');
+            var estrellaActual = pilas.obtener_actores_en(this.receptor.x, this.receptor.y, "Estrella");
             estrellaActual[0].eliminar();
             return true;
         }
@@ -19426,7 +19426,7 @@ var EscenaPolicia = (function (_super) {
         this.fondo = new Fondo('rocio/pradera.jpg', 0, 0);
         this.fondo.escala_x = 1.2;
         this.fondo.escala_y = 1.2;
-        this.cuadricula = new Cuadricula(0, -100, 1, 7, { alto: 80 }, { grilla: 'rocio/callecasilla.png', cantColumnas: 5 });
+        this.cuadricula = new Cuadricula(0, -100, 1, 7, { alto: 70 }, { grilla: 'rocio/callecasilla.png', cantColumnas: 7 });
         this.autito = new Autito(0, 0);
         this.autito.setCuadricula(this.cuadricula, 0, 0);
         this.policias = [];

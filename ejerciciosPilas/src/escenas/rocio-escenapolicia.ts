@@ -20,9 +20,9 @@ class EscenaPolicia extends Base {
         this.fondo.escala_y = 1.2;    
 
         this.cuadricula = new Cuadricula(0,-100,1,7,
-            {alto: 80},
+            {alto: 70},
             {grilla: 'rocio/callecasilla.png', 
-            cantColumnas: 5})
+            cantColumnas: 7})
 
         this.autito = new Autito(0,0);
         this.autito.setCuadricula(this.cuadricula,0,0);
